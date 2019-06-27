@@ -63,7 +63,7 @@
             async deleteCategory(params) {
                 const confirm_delete = confirm(`「カテゴリーID ${params.id}」を、本当に削除しますか？`)
                 if(confirm_delete) {
-                    await this.$axios.delete(`category-masters/${params.id}`)
+                    await this.$axios.delete(`kw/category-masters/${params.id}`)
                     this.$router.push(0)
                 }
                 else {
@@ -72,7 +72,7 @@
             }
         },
         async asyncData({ $axios }) {
-            return $axios.$get('category-masters')
+            return $axios.$get('kw/category-masters')
                 .then(res => {
                     return { response: res }
                 }).catch(e => {

@@ -69,7 +69,7 @@
             }
         },
         async asyncData({ $axios, route }) {
-            return $axios.$get('category-masters')
+            return $axios.$get('kw/category-masters')
                 .then(res => {
                     return { response: res.find(cate => cate.id === route.params.id) }
                 }).catch(e => {
@@ -83,7 +83,7 @@
                     color: this.response.color,
                     filename: this.response.filename,
                 }
-                await this.$axios.put(`category-masters/${this.$route.params.id}`, payload)
+                await this.$axios.put(`kw/category-masters/${this.$route.params.id}`, payload)
                 this.$router.push("/kw/category")
             }
         }

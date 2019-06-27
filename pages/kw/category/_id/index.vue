@@ -55,7 +55,7 @@
             }
         },
         async asyncData({ $axios, params }) {
-            return $axios.$get('category-masters')
+            return $axios.$get('kw/category-masters')
                 .then(res => {
                     return { response: res.find(cate => cate.id === params.id) }
                 }).catch(e => {

@@ -67,7 +67,7 @@
                     color: this.color,
                     filename: this.filename,
                 }
-                await this.$axios.post("category-masters", payload)
+                await this.$axios.post("kw/category-masters", payload)
                 this.$router.push("/kw/category")
             }
         }
