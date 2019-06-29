@@ -3,7 +3,7 @@
         <h1 class="heading mb_24">お子さん情報</h1>
         <no-ssr>
             <form class="mb_32"
-                  v-for="(child,index) in edit_children"
+                  v-for="(child,index) in response"
                   :key="index"
             >
                 <div class="form__title">
@@ -83,16 +83,14 @@
                 }]
             }
         },
-        // async asyncData({ $axios, route }) {
-        //     const id = this.auth_user.id
-        //     console.log(id)
-        //     return $axios.$get(`/users/user-parents/${id}/children`)
-        //         .then(res => {
-        //             return { response: res }
-        //         }).catch(e => {
-        //             console.log(e)
-        //         })
-        // },
+        async asyncData({ $axios, params }) {
+            return $axios.$get(`/users/user-parents/${params.id}/children`)
+                .then(res => {
+                    return { response: res["children"] }
+                }).catch(e => {
+                    console.log(e)
+                })
+        },
         methods: {
             addUserChild() {
                 const userChild = {
@@ -108,16 +106,6 @@
                 }
                 this.response.children.push(userChild)
             },
-            // async deleteUserChild(child_id) {
-            //     const confirm_delete = confirm("お子さま情報を、本当に削除しますか？")
-            //     if(confirm_delete) {
-            //         await this.$axios.delete(`users/user-children/${child_id}`)
-            //         this.$router.push(0)
-            //     }
-            //     else {
-            //         return false
-            //     }
-            // },
             checkChildNumForRemoveButton: function(index) {
                 return index >= 1
             },
@@ -156,20 +144,8 @@
         },
         computed: {
             user() {
-                return this.$store.getters['user/user']
-            },
-            children_data() {
-                return this.$store.getters['user/children']
-            },
-            auth_user() {
                 return this.$store.getters['auth/user']
             },
-            ...mapGetters('user', [
-                'children'
-            ])
-        },
-        created() {
-
         }
     }
 </script>

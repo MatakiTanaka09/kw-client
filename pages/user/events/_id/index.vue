@@ -1,5 +1,5 @@
 <template>
-    <div class="event__detail">
+    <div class="event__detail mb_64">
         <div class="event__detail__container">
             <div class="image__container">
                 <div class="image__groups">
@@ -11,8 +11,11 @@
             </div>
             <div class="detail__container">
                 <div class="category__container">
-                    <div class="category">
-                        {{ response.category[0].name }}
+                    <div class="category"
+                         v-for="c in response.category"
+                         :key="c.id"
+                    >
+                        {{ c.name }}
                     </div>
                 </div>
                 <div class="title__container mb_8">
@@ -230,6 +233,12 @@
     }
     .mb_32 {
         margin-bottom: 32px;
+    }
+    .mb_200 {
+        margin-bottom: 200px;
+    }
+    .mb_250 {
+        margin-bottom: 250px;
     }
     .mt_8 {
         margin-top: 8px;

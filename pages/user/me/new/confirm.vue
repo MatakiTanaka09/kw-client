@@ -163,7 +163,8 @@
                 return index + 1
             },
             createUserAccountParams: function(parent, children) {
-                const _parent = Object.assign(parent, {user_master_id: 1, icon: ""});
+                const user_master_id = this.auth_user.id
+                const _parent = Object.assign(parent, {user_master_id: user_master_id, icon: ""});
                 let _children = [];
                 for(let i = 0; i < children.length; i++) {
                     delete children[i].year;
@@ -172,6 +173,11 @@
                     _children[i] = Object.assign(children[i], {icon: ""});
                 }
                 return {parent: _parent, children: _children};
+            }
+        },
+        computed: {
+            auth_user() {
+                return this.$store.getters['auth/user']
             }
         },
         mounted() {

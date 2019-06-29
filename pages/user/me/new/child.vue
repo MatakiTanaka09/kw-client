@@ -24,25 +24,49 @@
             <div class="field wrapper mb_16">
                 <label class="label">名字</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="田中又暉" v-model="child.full_name">
+                    <input
+                        v-validate="'required'"
+                        class="input"
+                        :name="'full_name' + index"
+                        type="text"
+                        placeholder="田中又暉"
+                        v-model="child.full_name">
+                    <div v-if="errors.has(`full_name${index}`)">
+                        {{ errors.first(`full_name${index}`) }}
+                    </div>
                 </div>
             </div>
             <div class="field wrapper mb_16">
                 <label class="label">名前</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="たなかゆうき" v-model="child.full_kana">
+                    <input
+                        v-validate="'required'"
+                        class="input"
+                        :name="'full_kana' + index"
+                        type="text"
+                        placeholder="たなかゆうき"
+                        v-model="child.full_kana">
+                    <div v-if="errors.has(`full_kana${index}`)">
+                        {{ errors.first(`full_kana${index}`) }}
+                    </div>
                 </div>
             </div>
             <div class="field wrapper mb_16">
                 <label class="label">性別</label>
                 <div class="control">
                     <div class="select">
-                        <select v-model="child.sex_id">
-                            <option selected>性別</option>
+                        <select
+                            v-validate="'required'"
+                            :name="'sex' + index"
+                            v-model="child.sex_id">
+                            <option selected value="null">性別</option>
                             <option value="2">男</option>
                             <option value="3">女</option>
                             <option value="4">その他</option>
                         </select>
+                        <div v-if="errors.has(`sex${index}`)">
+                            {{ errors.first(`sex${index}`) }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -50,32 +74,51 @@
                 <label class="label">お誕生日</label>
                 <div class="control">
                     <div class="select">
-                        <select v-model="child.birth_day.year">
+                        <select
+                            v-validate="'required'"
+                            :name="'birth_day.year' + index"
+                            v-model="child.birth_day.year">
                             <option
                                 v-for="n in range(checkYear()-15,checkYear())"
                                 :key="n"
                                 :value="n"
                             >{{ n }}年</option>
                         </select>
+                        <div v-if="errors.has(`birth_day.year${index}`)">
+                            {{ errors.first(`birth_day.year${index}`) }}
+                        </div>
                     </div>
                     <div class="select">
-                        <select v-model="child.birth_day.month">
+                        <select
+                            v-validate="'required'"
+                            :name="'birth_day.month' + index"
+                            v-model="child.birth_day.month">
                             <option
                                 v-for="n in 12"
                                 :key="n"
                                 :value="n"
                             >{{ n }}月</option>
                         </select>
+                        <div v-if="errors.has(`birth_day.month${index}`)">
+                            {{ errors.first(`birth_day.month${index}`) }}
+                        </div>
                     </div>
                     <div class="select">
-                        <select v-model="child.birth_day.day">
+                        <select
+                            v-validate="'required'"
+                            :name="'birth_day.day' + index"
+                            v-model="child.birth_day.day">
                             <option
                                 v-for="n in 31"
                                 :key="n"
                                 :value="n"
                             >{{ n }}日</option>
                         </select>
+                        <div v-if="errors.has(`birth_day.day${index}`)">
+                            {{ errors.first(`birth_day.day${index}`) }}
+                        </div>
                     </div>
+                    <div class="hidden"></div>
                 </div>
             </div>
         </form>
@@ -89,23 +132,35 @@
         <div class="buttons__container">
             <div class="button__group">
                 <nuxt-link to="/user/me/new/parent">
-                    <div class="btn light-green">
+                    <button class="button btn light-green">
                         前に戻る
-                    </div>
+                    </button>
                 </nuxt-link>
             </div>
             <div class="button__group">
-                <a @click="storeParentAndMoving">
-                    <div class="btn pink">
-                        確認画面へ
-                    </div>
-                </a>
+                <button class="button btn pink" @click="storeParentAndMoving" :disabled="errors.any() || !isComplete(children)">
+                    確認画面へ
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import Vue from 'vue'
+    import VeeValidate, { Validator } from 'vee-validate'
+    import ja from 'vee-validate/dist/locale/ja'
+
+    Vue.use(VeeValidate, {
+        classes: true,
+        classNames: {
+            valid: 'is-valid',
+            invalid: 'is-invalid'
+        }
+    });
+
+    Validator.localize('ja', ja);
+
     export default {
         name: "user-events-id-reserve",
         layout: "user",
@@ -117,7 +172,7 @@
                         full_kana: '',
                         sex_id: '',
                         birth_day: {
-                            date: '',
+                            date: new Date(),
                             year: '',
                             month: '',
                             day: ''
@@ -133,7 +188,7 @@
                     full_kana: '',
                     sex_id: '',
                     birth_day: {
-                        date: '',
+                        date: new Date(),
                         year: '',
                         month: '',
                         day: ''
@@ -213,7 +268,29 @@
             storeParentAndMoving: async function() {
                 await this.saveLocalStorage();
                 this.$router.push("/user/me/new/confirm");
+            },
+            isComplete: function(children) {
+                let result = 0;
+                children.forEach((el,i) => {
+                    Object.values(el).forEach(e => {
+                        if(typeof e === 'object') {
+                            Object.values(e).forEach(k => {
+                                (k === "" || k === null || k === "undefined") ? result++ : result
+                            })
+                        }
+                        (e === "" || e === null || e === "undefined") ? result++ : result
+                    })
+                });
+                return result === 0
             }
+
+        },
+        watch: {
+            birth_day: function() {
+                this.formatBirthDay(this.birth_day.year, this.birth_day.month, this.birth_day.day)
+            }
+        },
+        computed: {
         },
         mounted() {
             this.getLocalStorage()
@@ -222,6 +299,12 @@
 </script>
 
 <style lang="scss" scoped>
+    .is-valid {
+        border-color: rgb(94, 205, 189);
+    }
+    .is-invalid {
+        border-color: rgb(226, 121, 133);
+    }
     a:hover {
         opacity: 0.6;
     }
@@ -279,7 +362,8 @@
                 width: 50%;
                 padding: 4px;
                 .btn {
-                    padding: 8px 12px;
+                    width: 100%;
+                    height: 100%;
                     border-radius: 4px;
                     font-size: 16px;
                     font-weight: 800;

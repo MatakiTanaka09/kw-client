@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="app__container">
         <TopHeader/>
         <nuxt/>
         <TopFooter/>
@@ -8,7 +8,7 @@
 
 <script>
     import TopHeader from "~/components/organisms/header/user/Header"
-    import TopFooter from "~/components/organisms/footer/user/Footer"
+    import TopFooter from "~/components/organisms/footer/user/SimpleFooter"
     export default {
         components: {
             TopHeader,
@@ -21,5 +21,9 @@
     body {
         font-size: 14px;
     }
-
+    .app__container {
+        width: 100%;
+        position: relative;
+        height: 100%;
+    }
 </style>
