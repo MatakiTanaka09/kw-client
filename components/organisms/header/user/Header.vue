@@ -30,10 +30,10 @@
                                 <div class="nav-title">ログイン</div>
                             </div>
                         </nuxt-link>
-                        <nuxt-link to="/user/me/" class="navbar-item">
+                        <nuxt-link :to="'/user/me/' + params_id" class="navbar-item">
                             <div class="nav-list">
                                 <figure class="image nav-icon">
-                                    <img src="https://img.icons8.com/dotty/80/000000/login-as-user.png">
+                                    <img src="https://img.icons8.com/dotty/80/000000/login-as-user.png" alt="">
                                 </figure>
                                 <div class="nav-title">プロフィール</div>
                             </div>
@@ -69,10 +69,10 @@
         data() {
             return {
                 dropdownActive: false,
-                authLogoutModalActive: false
+                authLogoutModalActive: false,
+                params_id: '',
+                profile_url: ''
             }
-        },
-        computed: {
         },
         methods: {
             showAuthLogoutModalToggle() {
@@ -96,12 +96,35 @@
                 this.$router.push("/");
                 setTimeout(
                     this.$router.go(0)
-                    ,1000);
+                    , 1000);
+            },
+            async createParamsId() {
+                const id = this.user.id
+                const _user = await this.$axios.$get(`/users/user-parents/${id}/user`)
+                    .then(res => {
+                        this.params_id = res
+                    })
+                    .catch(err => err.response)
+            },
+            createProfileUrl: function() {
+                return this.profile_url = `/user/me/${this.paramsId}`
             },
             ...mapActions('auth', [
                 'logout'
             ])
         },
+        computed: {
+            user() {
+                return this.$store.getters["auth/user"]
+            },
+            paramsId() {
+                return this.params_id
+            }
+        },
+        mounted() {
+            this.createParamsId()
+            this.createProfileUrl()
+        }
     }
 </script>
 

@@ -1,60 +1,76 @@
 <template>
     <div class="create__container">
         <h1 class="heading mb_24">お子さん情報</h1>
-        <no-ssr>
-            <form class="mb_32"
-                  v-for="(child,index) in response"
-                  :key="index"
-            >
-                <div class="form__title">
-                    <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
+        <form class="mb_32"
+              v-for="(child,index) in response"
+              :key="index"
+        >
+            <div class="form__title">
+                <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
+                <!--<template v-if="checkChildNumForRemoveButton(index)">-->
+                    <!--<div class="remove__button">-->
+                        <!--<a @click="removeUserChild">-->
+                            <!--<div class="btn">-->
+                                <!--取り消す-->
+                            <!--</div>-->
+                        <!--</a>-->
+                    <!--</div>-->
+                <!--</template>-->
+            </div>
+            <div class="field wrapper mb_16">
+                <label class="label">名字</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="田中又暉" v-model="child.full_name">
                 </div>
-                <div class="field wrapper mb_16">
-                    <label class="label">名字</label>
-                    <div class="control">
-                        <input class="input" type="text" placeholder="田中又暉" v-model="child.full_name">
+            </div>
+            <div class="field wrapper mb_16">
+                <label class="label">名前</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="たなかゆうき" v-model="child.full_kana">
+                </div>
+            </div>
+            <div class="field wrapper mb_16">
+                <label class="label">性別</label>
+                <div class="control">
+                    <div class="select">
+                        <select v-model="child.sex_id">
+                            <option selected>性別</option>
+                            <option value="2">男</option>
+                            <option value="3">女</option>
+                            <option value="4">その他</option>
+                        </select>
                     </div>
                 </div>
-                <div class="field wrapper mb_16">
-                    <label class="label">名前</label>
-                    <div class="control">
-                        <input class="input" type="text" placeholder="たなかゆうき" v-model="child.full_kana">
-                    </div>
+            </div>
+            <div class="mb_24">
+                <div class="wrapper mb_8">
+                    <label class="label">誕生日</label>
+                    <p class="">{{ formatDate(child.birth_day) }}</p>
                 </div>
-                <div class="field wrapper mb_16">
-                    <label class="label">性別</label>
-                    <div class="control">
-                        <div class="select">
-                            <select v-model="child.sex_id">
-                                <option selected>性別</option>
-                                <option value="2">男</option>
-                                <option value="3">女</option>
-                                <option value="4">その他</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </no-ssr>
-        <div class="add__child mb_32">
-            <a @click="addUserChild">
-                <div class="btn">
-                    お子さん情報を追加する
-                </div>
-            </a>
-        </div>
-        <div class="buttons__container">
+            </div>
+        </form>
+        <div class="buttons__container mb_48">
             <div class="button__group">
-                <nuxt-link to="#">
+                <nuxt-link :to="back_url">
                     <div class="btn light-green">
                         前に戻る
                     </div>
                 </nuxt-link>
             </div>
             <div class="button__group">
-                <nuxt-link to="#">
+                <a @click.prevent="putChildren">
                     <div class="btn pink">
                         保存する
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="additional_child">
+            <h2 class="additional-heading mb_16">お子さん情報を追加したい方は、こちら</h2>
+            <div class="add__child mb_32">
+                <nuxt-link :to="new_url">
+                    <div class="btn">
+                        お子さん情報を追加する
                     </div>
                 </nuxt-link>
             </div>
@@ -63,6 +79,20 @@
 </template>
 
 <script>
+    import Vue from 'vue'
+    import VeeValidate, { Validator } from 'vee-validate'
+    import ja from 'vee-validate/dist/locale/ja'
+
+    Vue.use(VeeValidate, {
+        classes: true,
+        classNames: {
+            valid: 'is-valid',
+            invalid: 'is-invalid'
+        }
+    });
+
+    Validator.localize('ja', ja);
+
     import { mapGetters } from 'vuex'
     export default {
         name: "",
@@ -70,17 +100,8 @@
         data() {
             return {
                 response: [],
-                edit_children: [{
-                    full_name: '',
-                    full_kana: '',
-                    sex_id: '',
-                    birth_day: {
-                        date: '',
-                        year: '',
-                        month: '',
-                        day: ''
-                    }
-                }]
+                new_url: `/user/me/${this.$route.params.id}/children/new`,
+                back_url: `/user/me/${this.$route.params.id}`,
             }
         },
         async asyncData({ $axios, params }) {
@@ -92,20 +113,38 @@
                 })
         },
         methods: {
-            addUserChild() {
-                const userChild = {
-                    full_name: '',
-                    full_kana: '',
-                    sex_id: '',
-                    birth_day: {
-                        date: '',
-                        year: '',
-                        month: '',
-                        day: ''
-                    }
+            putChildren: async function() {
+                let _children = [];
+                let ok = 0
+                const children = this.response
+                for(let i = 0; i < children.length; i++) {
+                    _children[i] = Object.assign(children[i], {icon: ""});
                 }
-                this.response.children.push(userChild)
+                _children.forEach((el,i) => {
+                    console.log(`users/user-children/${el.id}`)
+                    this.$axios.put(`users/user-children/${el.id}`, el)
+                        .then(res => ok += 0)
+                        .catch(e => console.log(e))
+                })
+                ok === 0 ? this.$router.push(`/user/me/${this.$route.params.id}`) : this.$router.push("./")
             },
+            // addUserChild() {
+            //     const userChild = {
+            //         full_name: '',
+            //         full_kana: '',
+            //         sex_id: '',
+            //         birth_day: {
+            //             date: '',
+            //             year: '',
+            //             month: '',
+            //             day: ''
+            //         }
+            //     }
+            //     this.edit_children.push(userChild)
+            // },
+            // removeUserChild() {
+            //     this.response.pop()
+            // },
             checkChildNumForRemoveButton: function(index) {
                 return index >= 1
             },
@@ -125,17 +164,19 @@
                 const now = new Date();
                 return now.getFullYear()
             },
-            formatDateYear: function(_date) {
-                const d = new Date(_date);
-                this.birth_day.year = d.getFullYear();
+            formatBirthDay: function(year, month, day) {
+                const date = [year, month, day].join("-");
+                return new Date(date);
             },
-            formatDateMonth: function(_date) {
-                const d = new Date(_date);
-                this.birth_day.month = d.getMonth();
+            formatDate: function(birth_day) {
+                const d = new Date(birth_day);
+                const year = d.getFullYear();
+                const month = d.getMonth() + 1;
+                const date = d.getDate();
+                return this.formatStringDate(year, month, date);
             },
-            formatDate: function(_date) {
-                const d = new Date(_date);
-                this.birth_day.date = d.getDate();
+            formatStringDate: function(year, month, date) {
+                return year + "年" + month + "月" + date + "日";
             },
             checkUnprocessableUserChildren: async function(user_children) {
                 await this.$nextTick();
@@ -151,6 +192,12 @@
 </script>
 
 <style lang="scss" scoped>
+    .is-valid {
+        border-color: rgb(94, 205, 189);
+    }
+    .is-invalid {
+        border-color: rgb(226, 121, 133);
+    }
     a:hover {
         opacity: 0.6;
     }
@@ -162,6 +209,11 @@
     .sub-heading {
         font-size: 16px;
         font-weight: 800;
+    }
+    .additional-heading {
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
     }
     .mb_4 {
         margin-bottom: 4px;
@@ -177,6 +229,9 @@
     }
     .mb_32 {
         margin-bottom: 32px;
+    }
+    .mb_48 {
+        margin-bottom: 48px;
     }
     .mt_8 {
         margin-top: 8px;

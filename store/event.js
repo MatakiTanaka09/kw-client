@@ -13,12 +13,19 @@ export const mutations = {
 };
 
 export const actions = {
-    // async nuxtServerInit({ commit }, { req }) {
-    //     // this.$axios.$get('/users/event-details/')
-    //     commit('SET_EVENT', { event: "event!"})
-    //     const [_event, _res] = await Promise.all([
-    //
-    //     ])
+    // async nuxtClientInit ({ commit, state, dispatch }, { req }) {
+    //     if (localStorage.jwt) {
+    //         await this.$axios.$get('/users/user-masters/me')
+    //             .then(res => {
+    //                 if(isEmpty(res)) {
+    //                     commit('setUser', { user: null, token: '', isLoggedIn: false })
+    //                 }
+    //                 commit('setUser', { user: res["data"], token: localStorage.jwt})
+    //             }).catch(e => {
+    //                 localStorage.removeItem('jwt');
+    //                 console.log(e);
+    //             });
+    //     }
     // },
     async GET_EVENT({ commit }, { id }) {
         try {

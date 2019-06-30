@@ -10,6 +10,16 @@
                     <img src="http://placehold.jp/450x700.png" alt="">
                 </figure>
             </div>
+            <div class="search__buttons mb_24">
+                <div class="search__button">
+                    <div class="">
+                        <button class="button btn custom">子どもの年齢</button>
+                    </div>
+                    <div class="">
+                        <button class="button btn">さがす</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="main">
             <div class="main__content mb_64">
@@ -64,7 +74,9 @@
                     <h1 class="title">こどもの好きを<br>見つけよう</h1>
                     <p class="sub-title mb_12">こどもの「やりたい」を好きなだけ体験できる新しい学びスタイル</p>
                     <div class="button-box">
-                        <button class="btn">登録する</button>
+                        <nuxt-link to="/user/auth/register">
+                            <button class="btn">登録する</button>
+                        </nuxt-link>
                     </div>
                 </div>
                 <figure class="image">
@@ -72,17 +84,15 @@
                 </figure>
             </div>
         </div>
-        <StickyFooter/>
     </div>
 </template>
 
 <script>
-    import StickyFooter from "~/components/organisms/footer/user/TopStickyFooter"
+
     import RecentlyCardLists from "~/components/molecules/cards/users/events/recently-card-lists/RecentlyCardLists"
     export default {
         layout: "user",
         components: {
-            StickyFooter,
             RecentlyCardLists
         },
         data() {
@@ -139,6 +149,24 @@
         .top {
             position: relative;
             &__image {}
+            .search__buttons {
+                .search__button {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    .btn {
+                        padding: 0 36px;
+                        font-weight: 800;
+                        border: 1px solid rgb(226, 121, 133);
+                        color: rgb(226, 121, 133);
+                    }
+                    .custom {
+                        background-color: rgb(226, 121, 133);
+                        border: 2px solid rgb(226, 121, 133);
+                        color: white;
+                    }
+                }
+            }
         }
         .main {
             padding: 16px;
