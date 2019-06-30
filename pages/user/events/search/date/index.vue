@@ -1,5 +1,5 @@
 <template>
-    <div class="search__container">
+    <div class="search__container mb_200">
         <div class="events__container mb_48">
             <h2 class="heading_h2 mb_24">{{ heading }}</h2>
             <div class="event-card-lists">
@@ -71,6 +71,9 @@
     }
     .mb_48 {
         margin-bottom: 48px;
+    }
+    .mb_200 {
+        margin-bottom: 200px;
     }
     .bg_orange {
         background-color: #F45918;

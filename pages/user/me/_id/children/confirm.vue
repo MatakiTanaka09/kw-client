@@ -1,49 +1,10 @@
 <template>
     <div class="create__container">
         <h1 class="heading mb_24">確認画面</h1>
-        <div class="mb_32">
-            <div class="field wrapper mb_16">
-                <label class="label">氏名</label>
-                <div class="control">
-                    {{ parent.full_name }}
-                </div>
-            </div>
-            <div class="field wrapper mb_16">
-                <label class="label">ふりがな</label>
-                <div class="control">
-                    {{ parent.full_kana }}
-                </div>
-            </div>
-            <div class="field">
-                <label class="label">電話番号</label>
-                <div class="control">
-                    {{ parent.tel }}
-                </div>
-            </div>
-            <div class="field wrapper mb_16">
-                <label class="label">性別</label>
-                <div class="control">
-                    {{ formatParentSex(parent.sex) }}
-                </div>
-            </div>
-            <div class="field wrapper mb_16">
-                <label class="label">郵便番号</label>
-                <div class="control">
-                    {{ formatZipCode(parent.zip_code1, parent.zip_code2) }}
-                </div>
-            </div>
-            <div class="field wrapper mb_16">
-                <label class="label">住所</label>
-                <div class="control">
-                    {{ formatAddress(parent.state, parent.city, parent.address1, parent.address2)}}
-                </div>
-            </div>
-        </div>
         <div class="mb_32"
              v-for="(child,index) in children"
              :key="index"
         >
-            <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
             <div class="field wrapper mb_16">
                 <label class="label">お名前</label>
                 <div class="control">
@@ -71,7 +32,7 @@
         </div>
         <div class="buttons__container">
             <div class="button__group">
-                <nuxt-link to="/user/me/new/child">
+                <nuxt-link :to="back_url">
                     <div class="btn light-green">
                         前に戻る
                     </div>
@@ -94,32 +55,24 @@
         layout: "user",
         data() {
             return {
-                parent: '',
-                children: ''
+                children: '',
+                me_url: `/user/me/${this.$route.params.id}`,
+                back_url: `/user/me/${this.$route.params.id}/children/new`
             }
         },
         methods: {
             postUserAccount: async function() {
-                const data = this.createUserAccountParams(this.parent, this.children);
-                await this.removeParentLocalStorage();
+                const data = this.createUserAccountParams(this.children);
                 await this.removeChildrenLocalStorage();
-                await this.$axios.post("users/user-parents", data).then(res => {
-                    this.$router.push("/user/me/new/completed");
+                console.log(data)
+                await this.$axios.post(`users/user-children/${this.$route.params.id}`, data).then(res => {
+                    this.$router.push(this.me_url);
                 }).catch(e => {
                     console.log(e)
                 });
             },
-            getParentLocalStorage: function(){
-                const ls_data = JSON.parse(window.localStorage.getItem("parent"));
-                if (!ls_data) {
-                    return false;
-                }
-                else {
-                    this.parent = ls_data;
-                }
-            },
             getChildrenLocalStorage: function() {
-                const ls_data = JSON.parse(window.localStorage.getItem("children"));
+                const ls_data = JSON.parse(window.localStorage.getItem("children_new"));
                 if (!ls_data) {
                     return false;
                 }
@@ -127,15 +80,8 @@
                     this.children = ls_data;
                 }
             },
-            removeParentLocalStorage: async function() {
-                window.localStorage.removeItem("parent");
-            },
             removeChildrenLocalStorage: async function() {
-                window.localStorage.removeItem("children");
-            },
-            storeParentAndMoving: async function() {
-                await this.saveLocalStorage();
-                this.$router.push("/user/me/new/child");
+                window.localStorage.removeItem("children_new");
             },
             formatParentSex: function(sex) {
                 return ["", "男", "女", "その他"][sex-1]
@@ -152,7 +98,7 @@
             formatDate: function(birth_day) {
                 const d = new Date(birth_day);
                 const year = d.getFullYear();
-                const month = d.getMonth();
+                const month = d.getMonth() + 1;
                 const date = d.getDate();
                 return this.formatStringDate(year, month, date);
             },
@@ -162,9 +108,7 @@
             childCounter: function(index) {
                 return index + 1
             },
-            createUserAccountParams: function(parent, children) {
-                const user_master_id = this.auth_user.id
-                const _parent = Object.assign(parent, {user_master_id: user_master_id, icon: ""});
+            createUserAccountParams: function(children) {
                 let _children = [];
                 for(let i = 0; i < children.length; i++) {
                     delete children[i].year;
@@ -172,7 +116,7 @@
                     delete children[i].day;
                     _children[i] = Object.assign(children[i], {icon: ""});
                 }
-                return {parent: _parent, children: _children};
+                return {children: _children};
             }
         },
         computed: {
@@ -181,7 +125,6 @@
             }
         },
         mounted() {
-            this.getParentLocalStorage();
             this.getChildrenLocalStorage();
         }
     }

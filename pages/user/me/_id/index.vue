@@ -1,36 +1,37 @@
 <template>
     <div class="user__container">
+
         <div class="parent__container mb_48">
             <h1 class="heading mb_24">ユーザー情報</h1>
             <div class="mb_24">
                 <div class="wrapper mb_8">
                     <label class="label">氏名</label>
-                    <p class="sub-heading">{{response.parent.full_name}}</p>
+                    <p class="sub-heading">{{ response["parent"].full_name }}</p>
                 </div>
             </div>
             <div class="mb_24">
                 <div class="wrapper mb_8">
                     <label class="label">ふりがな</label>
-                    <p class="sub-heading">{{response.parent.full_kana}}</p>
+                    <p class="sub-heading">{{response["parent"].full_kana}}</p>
                 </div>
             </div>
             <div class="mb_24">
                 <div class="wrapper mb_8">
                     <label class="label">性別</label>
-                    <p class="sub-heading">{{formatParentSex(response.parent.sex_id)}}</p>
+                    <p class="sub-heading">{{formatParentSex(response["parent"].sex_id)}}</p>
                 </div>
             </div>
             <div class="mb_24">
                 <div class="wrapper mb_8">
                     <label class="label">電話番号</label>
-                    <p class="sub-heading">{{ response.parent.tel }}</p>
+                    <p class="sub-heading">{{ response["parent"].tel }}</p>
                 </div>
             </div>
             <div class="mb_24">
                 <div class="wrapper mb_8">
                     <label class="label">郵便番号</label>
                     <p class="sub-heading">
-                        {{ formatZipCode(response.parent.zip_code1,response.parent.zip_code2) }}
+                        {{ formatZipCode(response["parent"].zip_code1,response["parent"].zip_code2) }}
                     </p>
                 </div>
             </div>
@@ -38,12 +39,12 @@
                 <div class="wrapper mb_8">
                     <label class="label">住所</label>
                     <p class="sub-heading">
-                        {{ formatAddress(response.parent.state, response.parent.city, response.parent.address1, response.parent.address2) }}
+                        {{ formatAddress(response["parent"].state, response["parent"].city, response["parent"].address1, response["parent"].address2) }}
                     </p>
                 </div>
             </div>
             <div class="edit__button">
-                <nuxt-link to="/user/me/parent/edit">
+                <nuxt-link :to="edit_parent_path">
                     <div class="btn light-green">
                         更新する
                     </div>
@@ -53,7 +54,7 @@
         <div class="children__container mb_24">
             <h1 class="heading mb_24">お子さん情報</h1>
             <div
-                v-for="(child,index) in response.children"
+                v-for="(child,index) in response['children']"
                 :key="child.id"
             >
                 <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
@@ -82,9 +83,8 @@
                     </div>
                 </div>
             </div>
-
             <div class="edit__button">
-                <nuxt-link to="/user/me/children/edit">
+                <nuxt-link :to="edit_children_path">
                     <div class="btn light-green">
                         更新する
                     </div>
@@ -100,7 +100,9 @@
         layout: "user",
         data() {
             return {
-                response: []
+                response: [],
+                edit_parent_path: `/user/me/${this.$route.params.id}/edit`,
+                edit_children_path: `/user/me/${this.$route.params.id}/children/edit`
             }
         },
         methods: {
@@ -129,16 +131,38 @@
             childCounter: function(index) {
                 return index + 1
             },
+            async firstFetch() {
+                const id = this.auth_user.id
+                const _user = await this.$axios.$get(`/users/user-parents/${id}/user`)
+                    .then(res => {
+                        this.$store.dispatch('user/GET_USER_CHILDREN', { id: res })
+                    })
+                    .catch(err => err.response)
+            }
         },
         async asyncData({ $axios, params }) {
-            const id = "68608530-9813-11e9-8c77-457e6b5eed6d";
-            return $axios.$get(`users/user-parents/${id}/children`)
+            return $axios.$get(`users/user-parents/${params.id}/children`)
                 .then(res => {
                     return { response: res }
                 }).catch(e => {
                     console.log(e)
                 })
+        },
+        computed: {
+            auth_user() {
+                return this.$store.getters['auth/user']
+            },
+            children() {
+                return this.$store.getters['user/children']
+            },
+            user() {
+                return this.$store.getters['user/user']
+            }
+        },
+        mounted() {
+            this.firstFetch()
         }
+
     }
 </script>
 

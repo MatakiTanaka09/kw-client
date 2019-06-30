@@ -5,20 +5,47 @@
             <div class="field wrapper mb_16">
                 <label class="label">氏名</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="田中太郎" v-model="response.full_name">
+                    <input
+                        v-validate="'required'"
+                        class="input"
+                        name="full_name"
+                        type="text"
+                        placeholder="田中太郎"
+                        v-model="response.full_name">
+                    <div v-if="errors.has('full_name')">
+                        {{ errors.first('full_name') }}
+                    </div>
                 </div>
             </div>
             <div class="field wrapper mb_16">
                 <label class="label">ふりがな</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="たなかたろう" v-model="response.full_kana">
+                    <input
+                        v-validate="'required'"
+                        class="input"
+                        name="full_kana"
+                        type="text"
+                        placeholder="たなかたろう"
+                        v-model="response.full_kana">
+                    <div v-if="errors.has('full_kana')">
+                        {{ errors.first('full_kana') }}
+                    </div>
                 </div>
             </div>
             <div class="field">
                 <label class="label">電話番号</label>
                 <div class="control">
                     <div class="display__edit">
-                        <input class="input" type="tel" placeholder="123-4567-8901" v-model="response.tel">
+                        <input
+                            v-validate="'required|telephone'"
+                            class="input"
+                            name="tel"
+                            type="tel"
+                            placeholder="090-1234-5678"
+                            v-model="response.tel">
+                        <div v-if="errors.has('tel:telephone')">
+                            {{ errors.first('tel:telephone') }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -26,12 +53,18 @@
                 <label class="label">性別</label>
                 <div class="control">
                     <div class="select">
-                        <select v-model="response.sex_id">
-                            <option selected>性別</option>
+                        <select
+                            v-validate="'required'"
+                            name="sex"
+                            v-model="response.sex_id">
+                            <option selected value="null">性別</option>
                             <option value="2">男</option>
                             <option value="3">女</option>
                             <option value="4">その他</option>
                         </select>
+                        <div v-if="errors.has('sex')">
+                            {{ errors.first('sex') }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -39,13 +72,31 @@
                 <div class="field">
                     <label class="label">郵便番号(上3桁)</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="123" v-model="response.zip_code1">
+                        <input
+                            v-validate="'required|regex:\\d{3}'"
+                            class="input"
+                            name="zip_code1"
+                            type="text"
+                            placeholder="123"
+                            v-model="response.zip_code1">
+                        <div v-if="errors.has('zip_code1')">
+                            {{ errors.first('zip_code1') }}
+                        </div>
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">郵便番号(下4桁)</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="4567" v-model="response.zip_code2">
+                        <input
+                            v-validate="'required|regex:\\d{4}'"
+                            class="input"
+                            name="zip_code2"
+                            type="text"
+                            placeholder="4567"
+                            v-model="response.zip_code2">
+                        <div v-if="errors.has('zip_code2')">
+                            {{ errors.first('zip_code2') }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -53,25 +104,61 @@
                 <div class="field">
                     <label class="label">都道府県</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="例）東京都" v-model="response.state">
+                        <input
+                            v-validate="'required'"
+                            class="input"
+                            name="state"
+                            type="text"
+                            placeholder="例）東京都"
+                            v-model="response.state">
+                        <div v-if="errors.has('state')">
+                            {{ errors.first('state') }}
+                        </div>
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">区・市</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="例）中央区、名古屋市北区" v-model="response.city">
+                        <input
+                            v-validate="'required'"
+                            class="input"
+                            name="city"
+                            type="text"
+                            placeholder="例）中央区、名古屋市北区"
+                            v-model="response.city">
+                        <div v-if="errors.has('city')">
+                            {{ errors.first('city') }}
+                        </div>
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">町村</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="例）月島" v-model="response.address1">
+                        <input
+                            v-validate="'required'"
+                            class="input"
+                            name="address1"
+                            type="text"
+                            placeholder="例）月島"
+                            v-model="response.address1">
+                        <div v-if="errors.has('address1')">
+                            {{ errors.first('address1') }}
+                        </div>
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">番地・マンション名</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="例）1-1-1-201" v-model="response.address2">
+                        <input
+                            v-validate="'required'"
+                            class="input"
+                            name="address2"
+                            type="text"
+                            placeholder="例）1-1-1-201"
+                            v-model="response.address2">
+                        <div v-if="errors.has('address2')">
+                            {{ errors.first('address2') }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -87,17 +174,50 @@
 </template>
 
 <script>
+    import Vue from 'vue'
+    import VeeValidate, { Validator } from 'vee-validate'
+    import ja from 'vee-validate/dist/locale/ja'
+
+    Vue.use(VeeValidate, {
+        classes: true,
+        classNames: {
+            valid: 'is-valid',
+            invalid: 'is-invalid'
+        }
+    });
+
+    Validator.localize('ja', ja);
+
+    let telephone = {
+        getMessage(field, args) {
+            return '電話番号は, 090-1234-5678,または10桁か11桁の数字で半角入力してください';
+        },
+        validate(value){
+            let pattern;
+            if (value.indexOf('-') ===  -1){
+                // ハイフン無し
+                pattern = /^\d{10}$|^\d{11}$/
+            }else{
+                // ハイフンあり
+                pattern = /^\d{2,5}-\d{1,4}-\d{4}$/;
+            }
+            return pattern.test(value);
+        }
+    };
+    Validator.extend('telephone', telephone);
+
     export default {
-        name: "",
-        layout: "user",
+        name: "index",
+        layout: 'user',
         data() {
             return {
-                response: []
+                response: [],
             }
         },
         async asyncData({ $axios, params }) {
-            const id = "7367db40-9751-11e9-b2f2-77dca8e82f9b";
-            return $axios.$get(`users/user-parents/${id}`)
+            const create_url = `users/user-parents/${params.id}`
+
+            return $axios.$get(create_url)
                 .then(res => {
                     return { response: res }
                 }).catch(e => {
@@ -106,8 +226,7 @@
         },
         methods: {
             putUserParent: async function() {
-                const id = "7367db40-9751-11e9-b2f2-77dca8e82f9b";
-                const user_master_id = 1;
+                const user_master_id = this.user.id
                 const payload = {
                     user_master_id: user_master_id,
                     full_name: this.response.full_name,
@@ -121,15 +240,25 @@
                     address1: this.response.address1,
                     address2: this.response.address2
                 }
-                // await this.$axios.put(`kw/category-masters/${this.$route.params.id}`, payload)
-                await this.$axios.put(`users/user-parents/${id}`, payload)
-                this.$router.push("/user/me");
-            }
+                await this.$axios.put(`users/user-parents/${this.$route.params.id}`, payload)
+                this.$router.push(`/user/me/${this.$route.params.id}`);
+            },
+        },
+        computed: {
+            user() {
+                return this.$store.getters['auth/user']
+            },
         }
     }
 </script>
 
 <style lang="scss" scoped>
+    .is-valid {
+        border-color: rgb(94, 205, 189);
+    }
+    .is-invalid {
+        border-color: rgb(226, 121, 133);
+    }
     a:hover {
         opacity: 0.6;
     }

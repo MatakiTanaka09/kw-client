@@ -2,18 +2,20 @@
     <div class="create__container">
         <h1 class="heading mb_24">お子さん情報</h1>
         <form class="mb_32"
-              v-for="(child,index) in response.children"
+              v-for="(child,index) in response"
               :key="index"
         >
             <div class="form__title">
                 <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
-                <div class="remove__button">
-                    <a @click="deleteUserChild(child.id)">
-                        <div class="btn">
-                            取り消す
-                        </div>
-                    </a>
-                </div>
+                <!--<template v-if="checkChildNumForRemoveButton(index)">-->
+                    <!--<div class="remove__button">-->
+                        <!--<a @click="removeUserChild">-->
+                            <!--<div class="btn">-->
+                                <!--取り消す-->
+                            <!--</div>-->
+                        <!--</a>-->
+                    <!--</div>-->
+                <!--</template>-->
             </div>
             <div class="field wrapper mb_16">
                 <label class="label">名字</label>
@@ -40,26 +42,35 @@
                     </div>
                 </div>
             </div>
-        </form>
-        <div class="add__child mb_32">
-            <a @click="addUserChild">
-                <div class="btn">
-                    お子さん情報を追加する
+            <div class="mb_24">
+                <div class="wrapper mb_8">
+                    <label class="label">誕生日</label>
+                    <p class="">{{ formatDate(child.birth_day) }}</p>
                 </div>
-            </a>
-        </div>
-        <div class="buttons__container">
+            </div>
+        </form>
+        <div class="buttons__container mb_48">
             <div class="button__group">
-                <nuxt-link to="#">
+                <nuxt-link :to="back_url">
                     <div class="btn light-green">
                         前に戻る
                     </div>
                 </nuxt-link>
             </div>
             <div class="button__group">
-                <nuxt-link to="#">
+                <a @click.prevent="putChildren">
                     <div class="btn pink">
                         保存する
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="additional_child">
+            <h2 class="additional-heading mb_16">お子さん情報を追加したい方は、こちら</h2>
+            <div class="add__child mb_32">
+                <nuxt-link :to="new_url">
+                    <div class="btn">
+                        お子さん情報を追加する
                     </div>
                 </nuxt-link>
             </div>
@@ -68,49 +79,72 @@
 </template>
 
 <script>
+    import Vue from 'vue'
+    import VeeValidate, { Validator } from 'vee-validate'
+    import ja from 'vee-validate/dist/locale/ja'
+
+    Vue.use(VeeValidate, {
+        classes: true,
+        classNames: {
+            valid: 'is-valid',
+            invalid: 'is-invalid'
+        }
+    });
+
+    Validator.localize('ja', ja);
+
+    import { mapGetters } from 'vuex'
     export default {
         name: "",
         layout: "user",
         data() {
             return {
                 response: [],
+                new_url: `/user/me/${this.$route.params.id}/children/new`,
+                back_url: `/user/me/${this.$route.params.id}`,
             }
         },
-        async asyncData({ $axios, params, context }) {
-            // const id = "c6294090-97fe-11e9-89b4-11d300c8a5c2";
-            const id = "907ed180-9804-11e9-80c2-832c94dac7a5"
-            return $axios.$get(`users/user-parents/${id}/children`)
+        async asyncData({ $axios, params }) {
+            return $axios.$get(`/users/user-parents/${params.id}/children`)
                 .then(res => {
-                    return { response: res };
+                    return { response: res["children"] }
                 }).catch(e => {
-                    console.log(context.e)
+                    console.log(e)
                 })
         },
         methods: {
-            addUserChild() {
-                const userChild = {
-                    full_name: '',
-                    full_kana: '',
-                    sex_id: '',
-                    birth_day: {
-                        date: '',
-                        year: '',
-                        month: '',
-                        day: ''
-                    }
+            putChildren: async function() {
+                let _children = [];
+                let ok = 0
+                const children = this.response
+                for(let i = 0; i < children.length; i++) {
+                    _children[i] = Object.assign(children[i], {icon: ""});
                 }
-                this.response.children.push(userChild)
+                _children.forEach((el,i) => {
+                    console.log(`users/user-children/${el.id}`)
+                    this.$axios.put(`users/user-children/${el.id}`, el)
+                        .then(res => ok += 0)
+                        .catch(e => console.log(e))
+                })
+                ok === 0 ? this.$router.push(`/user/me/${this.$route.params.id}`) : this.$router.push("./")
             },
-            async deleteUserChild(child_id) {
-                const confirm_delete = confirm("お子さま情報を、本当に削除しますか？")
-                if(confirm_delete) {
-                    await this.$axios.delete(`users/user-children/${child_id}`)
-                    this.$router.push(0)
-                }
-                else {
-                    return false
-                }
-            },
+            // addUserChild() {
+            //     const userChild = {
+            //         full_name: '',
+            //         full_kana: '',
+            //         sex_id: '',
+            //         birth_day: {
+            //             date: '',
+            //             year: '',
+            //             month: '',
+            //             day: ''
+            //         }
+            //     }
+            //     this.edit_children.push(userChild)
+            // },
+            // removeUserChild() {
+            //     this.response.pop()
+            // },
             checkChildNumForRemoveButton: function(index) {
                 return index >= 1
             },
@@ -130,30 +164,40 @@
                 const now = new Date();
                 return now.getFullYear()
             },
-            formatDateYear: function(_date) {
-                const d = new Date(_date);
-                this.birth_day.year = d.getFullYear();
+            formatBirthDay: function(year, month, day) {
+                const date = [year, month, day].join("-");
+                return new Date(date);
             },
-            formatDateMonth: function(_date) {
-                const d = new Date(_date);
-                this.birth_day.month = d.getMonth();
+            formatDate: function(birth_day) {
+                const d = new Date(birth_day);
+                const year = d.getFullYear();
+                const month = d.getMonth() + 1;
+                const date = d.getDate();
+                return this.formatStringDate(year, month, date);
             },
-            formatDate: function(_date) {
-                const d = new Date(_date);
-                this.birth_day.date = d.getDate();
+            formatStringDate: function(year, month, date) {
+                return year + "年" + month + "月" + date + "日";
             },
             checkUnprocessableUserChildren: async function(user_children) {
                 await this.$nextTick();
                 return user_children.length !== 0;
-
             }
         },
-        mounted() {
+        computed: {
+            user() {
+                return this.$store.getters['auth/user']
+            },
         }
     }
 </script>
 
 <style lang="scss" scoped>
+    .is-valid {
+        border-color: rgb(94, 205, 189);
+    }
+    .is-invalid {
+        border-color: rgb(226, 121, 133);
+    }
     a:hover {
         opacity: 0.6;
     }
@@ -165,6 +209,11 @@
     .sub-heading {
         font-size: 16px;
         font-weight: 800;
+    }
+    .additional-heading {
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
     }
     .mb_4 {
         margin-bottom: 4px;
@@ -180,6 +229,9 @@
     }
     .mb_32 {
         margin-bottom: 32px;
+    }
+    .mb_48 {
+        margin-bottom: 48px;
     }
     .mt_8 {
         margin-top: 8px;

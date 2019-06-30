@@ -37,6 +37,7 @@ module.exports = {
     */
     plugins: [
         '~/plugins/axios', // dotenv
+        { src: '~/plugins/nuxt-client-init.js', ssr: false },
     ],
 
     /*
@@ -52,6 +53,7 @@ module.exports = {
         // ['nuxt-sass-resources-loader', [
         //     '~/assets/sass/_variable.scss',
         // ]],
+        '@nuxtjs/toast',
         '@nuxtjs/style-resources'
     ],
     styleResources: {
@@ -64,7 +66,8 @@ module.exports = {
     ** Axios module configuration
     */
     axios: {
-        proxy: true
+        proxy: true,
+        proxyHeaders: true
     },
     proxy: {
         '/api': 'http://app.kidsweekend.test:8888'
@@ -88,8 +91,20 @@ module.exports = {
         }
     },
 
+    router: {
+        middleware: [
+        ]
+    },
+
     env: {
         API_URL: process.env.API_URL
     },
+
+    toast: {
+        // 右上にtoastを表示
+        position: 'top-center',
+        // 特に指定しなくても5秒で消えるように設定
+        duration: 5000
+    }
 }
 
