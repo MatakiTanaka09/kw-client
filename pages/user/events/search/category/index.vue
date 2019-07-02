@@ -25,7 +25,7 @@
             return {
                 response: [],
                 heading: 'カテゴリー',
-                url: '/user/events/search/category'
+                url: '/user/events/search/category-master'
             }
         },
         async asyncData({ $axios, query }) {

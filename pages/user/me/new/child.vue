@@ -118,7 +118,6 @@
                             {{ errors.first(`birth_day.day${index}`) }}
                         </div>
                     </div>
-                    <div class="hidden"></div>
                 </div>
             </div>
         </form>

@@ -1,11 +1,11 @@
 <template>
-    <div class="category__container">
-        <div class="category__wrapper">
+    <div class="event__container">
+        <div class="event__wrapper">
             <h2>
-                <strong>CategoryMaster</strong>
+                <strong>EventDetail</strong>
             </h2>
             <div class="create__button">
-                <nuxt-link :to="{ name: 'kw-category-new' }">
+                <nuxt-link :to="{ name: 'kw-event-detail-new' }">
                     <button class="button">作成</button>
                 </nuxt-link>
             </div>
@@ -14,32 +14,41 @@
             <thead>
             <tr>
                 <th>id</th>
-                <th>name</th>
-                <th>color</th>
-                <th>filename</th>
+                <th>開始時間</th>
+                <th>終了時間</th>
+                <th>公開ステータス</th>
+                <th>郵便番号</th>
+                <th>住所</th>
                 <th>action</th>
             </tr>
             </thead>
             <tfoot>
             <tr>
                 <th>id</th>
-                <th>name</th>
-                <th>color</th>
-                <th>filename</th>
+                <th>開始時間</th>
+                <th>終了時間</th>
+                <th>公開ステータス</th>
+                <th>郵便番号</th>
+                <th>住所</th>
                 <th>action</th>
             </tr>
             </tfoot>
             <tbody>
-            <tr v-for="res in response" :key="res.id">
-                <td>{{ res.id }}</td>
-                <td>{{ res.name }}</td>
-                <td>{{ res.color }}</td>
-                <td><a href="">{{ res.filename }}</a></td>
+            <tr
+                v-for="res in response['data']"
+                :key="res.id"
+            >
+                <th>{{ res.id }}</th>
+                <td>{{ res.started_at }}</td>
+                <td>{{ res.expired_at }}</td>
+                <td>{{ formatPublicState(res.pub_state) }}</td>
+                <td>{{ formatZipCode(res.zip_code1, res.zip_code2) }}</td>
+                <td>{{ formatAddress(res.state, res.city, res.address1, res.address2) }}</td>
                 <td class="td-expand">
-                    <nuxt-link :to="{ name: 'kw-category-id', params: { id: res.id } }">
+                    <nuxt-link :to="{ name: 'kw-event-detail-id', params: { id: res.id } }">
                         <button class="button">詳細</button>
                     </nuxt-link>
-                    <nuxt-link :to="{ name: 'kw-category-id-edit', params: { id: res.id } }">
+                    <nuxt-link :to="{ name: 'kw-event-detail-id-edit', params: { id: res.id } }">
                         <button class="button is-primary">編集</button>
                     </nuxt-link>
                     <button class="button is-danger" @click="deleteCategory({ id: res.id })">削除</button>
@@ -52,7 +61,7 @@
 
 <script>
     export default {
-        name: "categpory_index",
+        name: "event_detail_index",
         layout: 'kw',
         data() {
             return {
@@ -63,16 +72,25 @@
             async deleteCategory(params) {
                 const confirm_delete = confirm(`「カテゴリーID ${params.id}」を、本当に削除しますか？`)
                 if(confirm_delete) {
-                    await this.$axios.delete(`kw/category-masters/${params.id}`)
-                    this.$router.push(0)
+                    await this.$axios.delete(`kw/event-details/${params.id}`)
+                    this.$router.go(0)
                 }
                 else {
                     return false
                 }
-            }
+            },
+            formatPublicState: function(status) {
+                return ["公開中", "非公開"][status]
+            },
+            formatZipCode: function(zc1, zc2) {
+                return [zc1, zc2].join("-")
+            },
+            formatAddress: function(state, city, addr1, addr2) {
+                return [state, city, addr1, addr2].join("");
+            },
         },
         async asyncData({ $axios }) {
-            return $axios.$get('kw/category-masters')
+            return $axios.$get('kw/event-details')
                 .then(res => {
                     return { response: res }
                 }).catch(e => {
@@ -83,24 +101,22 @@
 </script>
 
 <style scoped lang="scss">
-    .category__container {
-        .category__wrapper {
+    .event__container {
+        .event__wrapper {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
     }
     table {
-        table-layout: fixed;
         min-width: 100%;
     }
-    tbody th {
-        width: 200px;
-        min-width: 200px;
-    }
     td {
-        width: 130px;
-        min-width: 130px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        max-width: 0;
     }
     .td-expand {
         width: 250px;
