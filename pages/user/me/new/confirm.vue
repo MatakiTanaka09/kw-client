@@ -1,7 +1,8 @@
 <template>
     <div class="create__container">
         <h1 class="heading mb_24">確認画面</h1>
-        <div class="mb_32">
+        <div class="mb_32 parent__container">
+            <h2 class="sub-heading mb_16">ユーザー情報</h2>
             <div class="field wrapper mb_16">
                 <label class="label">氏名</label>
                 <div class="control">
@@ -39,33 +40,38 @@
                 </div>
             </div>
         </div>
-        <div class="mb_32"
-             v-for="(child,index) in children"
-             :key="index"
-        >
-            <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
-            <div class="field wrapper mb_16">
-                <label class="label">お名前</label>
-                <div class="control">
-                    {{ child.full_name }}
-                </div>
-            </div>
-            <div class="field wrapper mb_16">
-                <label class="label">ふりがな</label>
-                <div class="control">
-                    {{ child.full_kana }}
-                </div>
-            </div>
-            <div class="field wrapper mb_16">
-                <label class="label">性別</label>
-                <div class="control">
-                    {{ formatChildSex(child.sex_id) }}
-                </div>
-            </div>
-            <div class="field wrapper mb_16">
-                <label class="label">誕生日</label>
-                <div class="control">
-                    {{ formatDate(child.birth_day) }}
+        <div class="mb_32 child__container">
+            <h2 class="sub-heading mb_16">お子さん情報</h2>
+            <div
+                v-for="(child,index) in children"
+                :key="child.id"
+            >
+                <h3 class="mb_16">{{ childCounter(index) }}人目</h3>
+                <div class="child_wrapper">
+                    <div class="field wrapper mb_16">
+                        <label class="label">お名前</label>
+                        <div class="control">
+                            {{ child.full_name }}
+                        </div>
+                    </div>
+                    <div class="field wrapper mb_16">
+                        <label class="label">ふりがな</label>
+                        <div class="control">
+                            {{ child.full_kana }}
+                        </div>
+                    </div>
+                    <div class="field wrapper mb_16">
+                        <label class="label">性別</label>
+                        <div class="control">
+                            {{ formatChildSex(child.sex_id) }}
+                        </div>
+                    </div>
+                    <div class="field wrapper mb_16">
+                        <label class="label">誕生日</label>
+                        <div class="control">
+                            {{ formatDate(child.birth_day) }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -199,6 +205,7 @@
     .sub-heading {
         font-size: 16px;
         font-weight: 800;
+        text-align: center;
     }
     .mb_4 {
         margin-bottom: 4px;
@@ -226,6 +233,14 @@
     }
     .create__container {
         padding: 16px;
+        .parent__container {
+            padding: 16px;
+            background-color: whitesmoke;
+        }
+        .child__container {
+            padding: 16px;
+            background-color: whitesmoke;
+        }
         .buttons__container {
             display: flex;
             width: 100%;
@@ -250,67 +265,17 @@
             }
         }
     }
-    .child-box {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .create__container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
     }
-    input[type=checkbox] {
-        display: none;
-    }
-    .checkbox {
-        box-sizing: border-box;
-        -webkit-transition: background-color 0.2s linear;
-        transition: background-color 0.2s linear;
-        position: relative;
-        display: inline-block;
-        padding: 10px 10px 10px 32px;
-        border-radius: 8px;
-        background-color: #f6f7f8;
-        vertical-align: middle;
-        cursor: pointer;
-        overflow: hidden;
-        width: 100%;
-    }
-    .checkbox:hover {
-        background-color: #e2edd7;
-    }
-    .checkbox:hover:after {
-        border-color: #53b300;
-    }
-    .checkbox:after {
-        -webkit-transition: border-color 0.2s linear;
-        transition: border-color 0.2s linear;
-        position: absolute;
-        top: 55%;
-        left: 7px;
-        display: block;
-        margin-top: -10px;
-        width: 16px;
-        height: 16px;
-        border: 2px solid #bbb;
-        border-radius: 6px;
-        content: '';
-    }
-    .checkbox:before {
-        -webkit-transition: opacity 0.2s linear;
-        transition: opacity 0.2s linear;
-        position: absolute;
-        top: 50%;
-        left: 13px;
-        display: block;
-        margin-top: -7px;
-        width: 5px;
-        height: 9px;
-        border-right: 3px solid #53b300;
-        border-bottom: 3px solid #53b300;
-        content: '';
-        opacity: 0;
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-    }
-    input[type=checkbox]:checked + .checkbox:before {
-        opacity: 1;
+
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
+
     }
 </style>

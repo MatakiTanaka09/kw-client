@@ -89,11 +89,9 @@
             .event-card-contents-category {
                 display: flex;
                 flex-wrap: wrap;
-
                 .category:first-child {
                     margin: 4px 4px 4px 0;
                 }
-
                 .category {
                     margin: 4px;
                     padding: 2px;
@@ -110,6 +108,20 @@
             .event-card-contents-price {
                 display: flex;
             }
+        }
+    }
+
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .event-card {
+            width: 50%;
+        }
+    }
+
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
+        .event-card {
+            width: 25%;
         }
     }
 </style>

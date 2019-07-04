@@ -3,44 +3,46 @@
 
         <div class="parent__container mb_48">
             <h1 class="heading mb_24">ユーザー情報</h1>
-            <div class="mb_24">
-                <div class="wrapper mb_8">
-                    <label class="label">氏名</label>
-                    <p class="sub-heading">{{ response["parent"].full_name }}</p>
+            <div class="parent__wrapper mb_24">
+                <div class="mb_24">
+                    <div class="wrapper mb_8">
+                        <label class="label">氏名</label>
+                        <p class="sub-heading">{{ response["parent"].full_name }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="mb_24">
-                <div class="wrapper mb_8">
-                    <label class="label">ふりがな</label>
-                    <p class="sub-heading">{{response["parent"].full_kana}}</p>
+                <div class="mb_24">
+                    <div class="wrapper mb_8">
+                        <label class="label">ふりがな</label>
+                        <p class="sub-heading">{{response["parent"].full_kana}}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="mb_24">
-                <div class="wrapper mb_8">
-                    <label class="label">性別</label>
-                    <p class="sub-heading">{{formatParentSex(response["parent"].sex_id)}}</p>
+                <div class="mb_24">
+                    <div class="wrapper mb_8">
+                        <label class="label">性別</label>
+                        <p class="sub-heading">{{formatParentSex(response["parent"].sex_id)}}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="mb_24">
-                <div class="wrapper mb_8">
-                    <label class="label">電話番号</label>
-                    <p class="sub-heading">{{ response["parent"].tel }}</p>
+                <div class="mb_24">
+                    <div class="wrapper mb_8">
+                        <label class="label">電話番号</label>
+                        <p class="sub-heading">{{ response["parent"].tel }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="mb_24">
-                <div class="wrapper mb_8">
-                    <label class="label">郵便番号</label>
-                    <p class="sub-heading">
-                        {{ formatZipCode(response["parent"].zip_code1,response["parent"].zip_code2) }}
-                    </p>
+                <div class="mb_24">
+                    <div class="wrapper mb_8">
+                        <label class="label">郵便番号</label>
+                        <p class="sub-heading">
+                            {{ formatZipCode(response["parent"].zip_code1,response["parent"].zip_code2) }}
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="mb_24">
-                <div class="wrapper mb_8">
-                    <label class="label">住所</label>
-                    <p class="sub-heading">
-                        {{ formatAddress(response["parent"].state, response["parent"].city, response["parent"].address1, response["parent"].address2) }}
-                    </p>
+                <div class="mb_24">
+                    <div class="wrapper mb_8">
+                        <label class="label">住所</label>
+                        <p class="sub-heading">
+                            {{ formatAddress(response["parent"].state, response["parent"].city, response["parent"].address1, response["parent"].address2) }}
+                        </p>
+                    </div>
                 </div>
             </div>
             <div class="edit__button">
@@ -51,35 +53,39 @@
                 </nuxt-link>
             </div>
         </div>
-        <div class="children__container mb_24">
+        <div class="children__container mb_48">
             <h1 class="heading mb_24">お子さん情報</h1>
-            <div
-                v-for="(child,index) in response['children']"
-                :key="child.id"
-            >
-                <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
-                <div class="mb_24">
-                    <div class="wrapper mb_8">
-                        <label class="label">名字</label>
-                        <p class="sub-heading">{{ child.full_name }}</p>
-                    </div>
-                </div>
-                <div class="mb_24">
-                    <div class="wrapper mb_8">
-                        <label class="label">名前</label>
-                        <p class="sub-heading">{{ child.full_kana }}</p>
-                    </div>
-                </div>
-                <div class="mb_24">
-                    <div class="wrapper mb_8">
-                        <label class="label">性別</label>
-                        <p class="sub-heading">{{ formatChildSex(child.sex_id) }}</p>
-                    </div>
-                </div>
-                <div class="mb_24">
-                    <div class="wrapper mb_8">
-                        <label class="label">誕生日</label>
-                        <p class="sub-heading">{{ formatDate(child.birth_day) }}</p>
+            <div class="children__wrapper mb_24">
+                <div
+                    v-for="(child,index) in response['children']"
+                    :key="child.id"
+                >
+                    <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
+                    <div class="wrapper">
+                        <div class="mb_24">
+                            <div class="wrapper mb_8">
+                                <label class="label">お名前</label>
+                                <p class="sub-heading">{{ child.full_name }}</p>
+                            </div>
+                        </div>
+                        <div class="mb_24">
+                            <div class="wrapper mb_8">
+                                <label class="label">ふりがな</label>
+                                <p class="sub-heading">{{ child.full_kana }}</p>
+                            </div>
+                        </div>
+                        <div class="mb_24">
+                            <div class="wrapper mb_8">
+                                <label class="label">性別</label>
+                                <p class="sub-heading">{{ formatChildSex(child.sex_id) }}</p>
+                            </div>
+                        </div>
+                        <div class="mb_24">
+                            <div class="wrapper mb_8">
+                                <label class="label">誕生日</label>
+                                <p class="sub-heading">{{ formatDate(child.birth_day) }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -208,6 +214,18 @@
     }
     .user__container {
         padding: 16px;
+        .parent__container {
+            .parent__wrapper {
+                padding: 16px;
+                background-color: whitesmoke;
+            }
+        }
+        .children__container {
+            .children__wrapper {
+                padding: 16px;
+                background-color: whitesmoke;
+            }
+        }
         .edit__button {
             width: 100%;
             text-align: center;
@@ -226,5 +244,18 @@
                 border: 2px solid rgb(94, 205, 189);
             }
         }
+    }
+
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .user__container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+    }
+
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
+
     }
 </style>

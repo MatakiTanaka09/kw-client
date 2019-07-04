@@ -359,6 +359,18 @@
     }
     // デスクトップ/タブレット横
     @media screen and (min-width: 769px) {
+        .event__detail {
+            .event__detail__container {
+                display: flex;
+                .image__container {
+                    width: 25%;
+                    padding: 4px;
+                }
+                .detail__container {
+                    width: 80%;
+                }
+            }
+        }
     }
 
 </style>

@@ -78,4 +78,17 @@
             }
         }
     }
+
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .event__container {
+            margin: 0 auto;
+            &__wrapper {
+            }
+        }
+    }
+
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
+    }
 </style>
