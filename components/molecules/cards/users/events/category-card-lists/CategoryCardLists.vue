@@ -14,7 +14,7 @@
 </template>
 
 <script>
-    import BaseCard from "~/components/atoms/cards/users/events/category-base-cards/BaseCard"
+    import BaseCard from "~/components/atoms/cards/users/events/category-master-base-cards/BaseCard"
     export default {
         components: {
             BaseCard
@@ -22,7 +22,7 @@
         data() {
             return {
                 heading: 'カテゴリー一覧',
-                url: '/user/events/search/category',
+                url: '/user/events/search/category-master',
                 params: []
             }
         },

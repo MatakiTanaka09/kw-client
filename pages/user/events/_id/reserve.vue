@@ -66,6 +66,15 @@
                         </div>
                     </nuxt-link>
                 </template>
+                <div class="button__group">
+                    <a
+                        @click="postBook(user.id, selectedChild, event.id, event.event_master.price)"
+                    >
+                        <div class="btn pink">
+                            予約する
+                        </div>
+                    </a>
+                </div>
             </div>
         </no-ssr>
     </div>
@@ -97,6 +106,7 @@
                     status: 200,
                     price: price
                 };
+                if(selected_child.length === 0) return false;
                 selected_child.forEach((el,i) => {
                     console.log(el,i)
                     array[i] = Object.assign({}, {

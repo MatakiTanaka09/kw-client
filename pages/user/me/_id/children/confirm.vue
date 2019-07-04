@@ -193,7 +193,6 @@
             }
         }
     }
-
     // SP横、タブレット縦
     @media screen and (min-width: 481px) {
         .create__container {
