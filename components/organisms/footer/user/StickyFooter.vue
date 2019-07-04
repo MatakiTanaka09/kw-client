@@ -10,11 +10,34 @@
                 </div>
                 <div class="right__item">
                     <div class="buttons">
-                        <nuxt-link :to="path">
-                            <button class="button reserve-request-button">
-                                {{ reserve_request }}
-                            </button>
-                        </nuxt-link>
+                        <template v-if="user && account">
+                            <nuxt-link :to="path">
+                                <button class="button reserve-request-button">
+                                    {{ reserve_request }}
+                                </button>
+                            </nuxt-link>
+                        </template>
+                        <template v-if="!user && account">
+                            <nuxt-link to="/user/auth/login">
+                                <button class="button reserve-request-button">
+                                    {{ login }}
+                                </button>
+                            </nuxt-link>
+                        </template>
+                        <template v-if="!user && !account">
+                            <nuxt-link to="/user/auth/login">
+                                <button class="button reserve-request-button">
+                                    {{ register }}
+                                </button>
+                            </nuxt-link>
+                        </template>
+                        <template v-if="user && !account">
+                            <nuxt-link to="/user/auth/login">
+                                <button class="button reserve-request-button">
+                                    {{ account }}
+                                </button>
+                            </nuxt-link>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -27,7 +50,10 @@
         name: "StickyFooter",
         data() {
             return {
-                reserve_request: "申込リクエスト"
+                reserve_request: "予約する",
+                login: "ログインが必要です",
+                register: "会員登録が必要です",
+                account: "アカウント情報が必要です"
             }
         },
         props: {
@@ -37,6 +63,14 @@
             price: {
                 type: Number
             }
+        },
+        computed: {
+            user() {
+                return this.$store.getters["auth/user"]
+            },
+            account() {
+                return this.$store.getters["user/user"]
+            },
         }
     }
 </script>

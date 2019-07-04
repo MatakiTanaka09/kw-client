@@ -26,26 +26,46 @@
             </div>
         </div>
         <no-ssr>
-            <div class="wrapper mb_32">
-                <h2 class="sub-heading mb_8">お子さん</h2>
-                <div class="content mb_8">
-                    <div class="mb_8"
-                         v-for="(child,index) in children"
-                         :key="child.id"
-                    >
-                        <input type="checkbox" name="children" :value="child.id" :id="'checkout0' + index" v-model="selectedChild">
-                        <label :for="'checkout0' + index" class="checkbox">{{ child.full_kana }}</label>
+            <template v-if="children">
+                <div class="wrapper mb_32">
+                    <h2 class="sub-heading mb_8">お子さん</h2>
+                    <div class="content mb_8">
+                        <div class="mb_8"
+                             v-for="(child,index) in children"
+                             :key="child.id"
+                        >
+                            <input type="checkbox" name="children" :value="child.id" :id="'checkout0' + index" v-model="selectedChild">
+                            <label :for="'checkout0' + index" class="checkbox">{{ child.full_kana }}</label>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </template>
             <div class="buttons__container">
-                <div class="button__group">
-                    <a @click="backPreview">
+                <template v-if="children">
+                    <div class="button__group">
+                        <a @click="backPreview">
+                            <div class="btn light-green">
+                                キャンセル
+                            </div>
+                        </a>
+                    </div>
+                    <div class="button__group">
+                        <a
+                            @click="postBook(user.id, selectedChild, event.id, event.event_master.price)"
+                        >
+                            <div class="btn pink">
+                                保存する
+                            </div>
+                        </a>
+                    </div>
+                </template>
+                <template v-else>
+                    <nuxt-link to="/user/me/new/parent">
                         <div class="btn light-green">
-                            キャンセル
+                            予約にはアカウント情報の登録が必要です。
                         </div>
-                    </a>
-                </div>
+                    </nuxt-link>
+                </template>
                 <div class="button__group">
                     <a
                         @click="postBook(user.id, selectedChild, event.id, event.event_master.price)"
@@ -217,21 +237,21 @@
             .button__group {
                 width: 50%;
                 padding: 4px;
-                .btn {
-                    padding: 8px 12px;
-                    border-radius: 4px;
-                    font-size: 16px;
-                    font-weight: 800;
-                    text-align: center;
-                }
                 .pink {
                     color: rgb(226, 121, 133);
                     border: 2px solid rgb(226, 121, 133);
                 }
-                .light-green {
-                    color: rgb(94, 205, 189);
-                    border: 2px solid rgb(94, 205, 189);
-                }
+            }
+            .btn {
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 16px;
+                font-weight: 800;
+                text-align: center;
+            }
+            .light-green {
+                color: rgb(94, 205, 189);
+                border: 2px solid rgb(94, 205, 189);
             }
         }
     }
@@ -297,5 +317,16 @@
     }
     input[type=checkbox]:checked + .checkbox:before {
         opacity: 1;
+    }
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .reserve__container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+    }
+
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
     }
 </style>

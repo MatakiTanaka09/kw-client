@@ -193,4 +193,15 @@
             }
         }
     }
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .create__container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+    }
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
+
+    }
 </style>

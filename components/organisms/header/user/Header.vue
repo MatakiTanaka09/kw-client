@@ -2,9 +2,16 @@
     <header class="global-header" id="header">
         <nav class="navbar" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <a class="navbar-item" href="/">
-                    <img src="https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/top/pc.jpg" width="120" height="28" alt="logo">
-                </a>
+                <template v-if="user">
+                    <nuxt-link class="navbar-item" to="/user/events">
+                        <img src="https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/top/pc.jpg" width="120" height="28" alt="logo">
+                    </nuxt-link>
+                </template>
+                <template v-else>
+                    <nuxt-link class="navbar-item" to="/">
+                        <img src="https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/top/pc.jpg" width="120" height="28" alt="logo">
+                    </nuxt-link>
+                </template>
                 <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample"  @click="dropdownToggle">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
@@ -14,46 +21,62 @@
             <div id="navbarBasicExample" class="navbar-menu" :class="{ 'is-active': dropdownActive }">
                 <div class="navbar-end">
                     <div class="nav-lists">
-                        <nuxt-link to="/user/auth/register" class="navbar-item">
-                            <div class="nav-list">
-                                <figure class="image nav-icon">
-                                    <img src="https://img.icons8.com/material/24/000000/enter-2--v1.png">
-                                </figure>
-                                <div class="nav-title">新規登録</div>
-                            </div>
-                        </nuxt-link>
-                        <nuxt-link to="/user/auth/login" class="navbar-item">
-                            <div class="nav-list">
-                                <figure class="image nav-icon">
-                                    <img src="https://img.icons8.com/windows/24/000000/enter-2.png">
-                                </figure>
-                                <div class="nav-title">ログイン</div>
-                            </div>
-                        </nuxt-link>
-                        <nuxt-link :to="'/user/me/' + params_id" class="navbar-item">
-                            <div class="nav-list">
-                                <figure class="image nav-icon">
-                                    <img src="https://img.icons8.com/dotty/80/000000/login-as-user.png" alt="">
-                                </figure>
-                                <div class="nav-title">プロフィール</div>
-                            </div>
-                        </nuxt-link>
-                        <nuxt-link to="#" class="navbar-item">
-                            <div class="nav-list">
-                                <figure class="image nav-icon">
-                                    <img src="https://img.icons8.com/ios/50/000000/reservation-2.png">
-                                </figure>
-                                <div class="nav-title">予約一覧</div>
-                            </div>
-                        </nuxt-link>
-                        <a class="navbar-item" @click="handleLogout">
-                            <div class="nav-list">
-                                <figure class="image nav-icon">
-                                    <img src="https://img.icons8.com/android/24/000000/logout-rounded-down.png">
-                                </figure>
-                                <div class="nav-title">サインアウト</div>
-                            </div>
-                        </a>
+                        <template v-if="!user">
+                            <nuxt-link to="/user/auth/register" class="navbar-item">
+                                <div class="nav-list">
+                                    <figure class="image nav-icon">
+                                        <img src="https://img.icons8.com/material/24/000000/enter-2--v1.png">
+                                    </figure>
+                                    <div class="nav-title">新規登録</div>
+                                </div>
+                            </nuxt-link>
+                            <nuxt-link to="/user/auth/login" class="navbar-item">
+                                <div class="nav-list">
+                                    <figure class="image nav-icon">
+                                        <img src="https://img.icons8.com/windows/24/000000/enter-2.png">
+                                    </figure>
+                                    <div class="nav-title">ログイン</div>
+                                </div>
+                            </nuxt-link>
+                        </template>
+                        <template v-else>
+                            <template v-if="account">
+                                <nuxt-link :to="'/user/me/' + params_id" class="navbar-item">
+                                    <div class="nav-list">
+                                        <figure class="image nav-icon">
+                                            <img src="https://img.icons8.com/dotty/80/000000/login-as-user.png" alt="">
+                                        </figure>
+                                        <div class="nav-title">プロフィール</div>
+                                    </div>
+                                </nuxt-link>
+                            </template>
+                            <template v-else>
+                                <nuxt-link to="/user/me/new/parent" class="navbar-item">
+                                    <div class="nav-list">
+                                        <figure class="image nav-icon">
+                                            <img src="https://img.icons8.com/dotty/80/000000/login-as-user.png" alt="">
+                                        </figure>
+                                        <div class="nav-title">アカウント情報登録</div>
+                                    </div>
+                                </nuxt-link>
+                            </template>
+                            <!--<nuxt-link to="#" class="navbar-item">-->
+                                <!--<div class="nav-list">-->
+                                    <!--<figure class="image nav-icon">-->
+                                        <!--<img src="https://img.icons8.com/ios/50/000000/reservation-2.png">-->
+                                    <!--</figure>-->
+                                    <!--<div class="nav-title">予約一覧</div>-->
+                                <!--</div>-->
+                            <!--</nuxt-link>-->
+                            <a class="navbar-item" @click="handleLogout">
+                                <div class="nav-list">
+                                    <figure class="image nav-icon">
+                                        <img src="https://img.icons8.com/android/24/000000/logout-rounded-down.png">
+                                    </figure>
+                                    <div class="nav-title">サインアウト</div>
+                                </div>
+                            </a>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -116,6 +139,9 @@
         computed: {
             user() {
                 return this.$store.getters["auth/user"]
+            },
+            account() {
+                return this.$store.getters["user/user"]
             },
             paramsId() {
                 return this.params_id
