@@ -5,7 +5,7 @@
                 <strong>CategoryMaster</strong>
             </h2>
             <div class="create__button">
-                <nuxt-link :to="{ name: 'kw-category-new' }">
+                <nuxt-link :to="{ name: 'kw-category-master-new' }">
                     <button class="button">作成</button>
                 </nuxt-link>
             </div>
@@ -36,10 +36,10 @@
                 <td>{{ res.color }}</td>
                 <td><a href="">{{ res.filename }}</a></td>
                 <td class="td-expand">
-                    <nuxt-link :to="{ name: 'kw-category-id', params: { id: res.id } }">
+                    <nuxt-link :to="{ name: 'kw-category-master-id', params: { id: res.id } }">
                         <button class="button">詳細</button>
                     </nuxt-link>
-                    <nuxt-link :to="{ name: 'kw-category-id-edit', params: { id: res.id } }">
+                    <nuxt-link :to="{ name: 'kw-category-master-id-edit', params: { id: res.id } }">
                         <button class="button is-primary">編集</button>
                     </nuxt-link>
                     <button class="button is-danger" @click="deleteCategory({ id: res.id })">削除</button>
@@ -52,7 +52,7 @@
 
 <script>
     export default {
-        name: "categpory_index",
+        name: "kw-category-master",
         layout: 'kw',
         data() {
             return {
@@ -63,8 +63,8 @@
             async deleteCategory(params) {
                 const confirm_delete = confirm(`「カテゴリーID ${params.id}」を、本当に削除しますか？`)
                 if(confirm_delete) {
-                    await this.$axios.delete(`category-masters/${params.id}`)
-                    this.$router.push(0)
+                    await this.$axios.delete(`kw/category-masters/${params.id}`)
+                    this.$router.go(0)
                 }
                 else {
                     return false
@@ -72,7 +72,7 @@
             }
         },
         async asyncData({ $axios }) {
-            return $axios.$get('category-masters')
+            return $axios.$get('kw/category-masters')
                 .then(res => {
                     return { response: res }
                 }).catch(e => {
@@ -91,16 +91,15 @@
         }
     }
     table {
-        table-layout: fixed;
+        /*table-layout: fixed;*/
         min-width: 100%;
     }
-    tbody th {
-        width: 200px;
-        min-width: 200px;
-    }
     td {
-        width: 130px;
-        min-width: 130px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        max-width: 0;
     }
     .td-expand {
         width: 250px;

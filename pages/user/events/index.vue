@@ -47,7 +47,7 @@
             <div class="event__container__wrapper">
                 <!--<RecommendCardLists/>-->
                 <RecentlyCardLists/>
-                <CategoryCardLists/>
+                <!--<CategoryCardLists/>-->
             </div>
         </div>
     </div>
@@ -56,20 +56,20 @@
 <script>
     import RecommendCardLists from "~/components/molecules/cards/users/events/recommend-card-lists/RecommendCardLists"
     import RecentlyCardLists from "~/components/molecules/cards/users/events/recently-card-lists/RecentlyCardLists"
-    import CategoryCardLists from "~/components/molecules/cards/users/events/category-card-lists/CategoryCardLists"
+    // import CategoryCardLists from "~/components/molecules/cards/users/events/category-master-card-lists/CategoryCardLists"
     export default {
         name: "events-index",
         layout: "user",
         components: {
             RecommendCardLists,
             RecentlyCardLists,
-            CategoryCardLists
+            // CategoryCardLists
         },
         data() {
             return {
                 path: {
                     more__button: {
-                        category: "/user/events/search/category",
+                        category: "/user/events/search/category-master",
                         age: "/user/events/search/age",
                         recently: "/user/events/search/date",
                     }
