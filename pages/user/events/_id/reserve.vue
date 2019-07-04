@@ -40,6 +40,14 @@
                     </div>
                 </div>
             </template>
+        </no-ssr>
+        <div class="wrapper mb_24">
+            <h2 class="sub-heading mb_8">備考（スクールにお伝えしておきたい内容をお書きください）</h2>
+            <div class="content">
+                <textarea class="textarea" placeholder="例）○○アレルギーです。" v-model="remark"></textarea>
+            </div>
+        </div>
+        <no-ssr>
             <div class="buttons__container">
                 <template v-if="children">
                     <div class="button__group">
@@ -51,10 +59,10 @@
                     </div>
                     <div class="button__group">
                         <a
-                            @click="postBook(user.id, selectedChild, event.id, event.event_master.price)"
+                            @click="postBook(user.id, selectedChild, event.id, event.school_master[0].id,event.event_master.price)"
                         >
                             <div class="btn pink">
-                                保存する
+                                予約する
                             </div>
                         </a>
                     </div>
@@ -66,15 +74,6 @@
                         </div>
                     </nuxt-link>
                 </template>
-                <div class="button__group">
-                    <a
-                        @click="postBook(user.id, selectedChild, event.id, event.event_master.price)"
-                    >
-                        <div class="btn pink">
-                            予約する
-                        </div>
-                    </a>
-                </div>
             </div>
         </no-ssr>
     </div>
@@ -88,7 +87,8 @@
         data() {
             return {
                 response: [],
-                selectedChild: []
+                selectedChild: [],
+                remark: ""
             }
         },
         methods: {
@@ -96,6 +96,7 @@
                 user_parent_id,
                 selected_child,
                 event_detail_id,
+                school_master_id,
                 price
             ) {
                 console.log(selected_child)
@@ -103,17 +104,19 @@
                 const data = {
                     user_parent_id: user_parent_id,
                     event_detail_id: event_detail_id,
+                    school_master_id: school_master_id,
                     status: 200,
                     price: price
                 };
                 if(selected_child.length === 0) return false;
                 selected_child.forEach((el,i) => {
-                    console.log(el,i)
                     array[i] = Object.assign({}, {
                         user_parent_id: user_parent_id,
                         event_detail_id: event_detail_id,
+                        school_master_id: school_master_id,
                         status: 200,
                         price: price,
+                        remark: this.remark,
                         user_child_id: el
                     });
                 });

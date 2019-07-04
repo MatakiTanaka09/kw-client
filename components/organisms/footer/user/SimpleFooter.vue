@@ -17,6 +17,12 @@
                         <img src="https://img.icons8.com/ios/50/000000/blogger.png" alt="Blog">
                     </figure>
                 </a>
+                <a href="#" target="_blank" class="line">
+                    <figure class="image social">
+                        <img src="https://img.icons8.com/dotty/80/000000/line-me.png" alt="line">
+                    </figure>
+                </a>
+
             </div>
             <div class="links mb_24 mt_8">
                 <div class="link-group">
