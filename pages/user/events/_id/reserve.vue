@@ -1,71 +1,84 @@
 <template>
     <div class="reserve__container">
-        <h1 class="heading mb_24">このイベントへ申し込む</h1>
-        <div class="wrapper mb_16">
+        <h1 class="heading mb_32">このイベントへ申し込む</h1>
+        <div class="wrapper mb_24">
             <h2 class="sub-heading mb_8">イベント名</h2>
             <div class="content">
                 {{ event.event_master.title }}
             </div>
         </div>
-        <div class="wrapper mb_16">
+        <div class="wrapper mb_24">
             <h2 class="sub-heading mb_8">開催日時</h2>
             <div class="content">
                 {{ formatDate(event.started_at) }}
             </div>
         </div>
-        <div class="wrapper mb_16">
+        <div class="wrapper mb_24">
             <h2 class="sub-heading mb_8">料金</h2>
             <div class="content">
                 {{ event.event_master.price }}円
             </div>
         </div>
-        <div class="wrapper mb_16">
+        <div class="wrapper mb_24">
             <h2 class="sub-heading mb_8">会場</h2>
             <div class="content">
                 {{ formatAddress(event) }}
             </div>
         </div>
-        <div class="wrapper mb_32">
-            <h2 class="sub-heading mb_8">お子さん</h2>
-            <div class="content mb_8">
-                <div class="mb_8"
-                     v-for="(child,index) in response.children"
-                     :key="child.id"
-                >
-                    <input type="checkbox" name="children" :value="child.id" :id="'checkout0' + index" v-model="selectedChild">
-                    <label :for="'checkout0' + index" class="checkbox">{{ child.full_kana }}</label>
+        <no-ssr>
+            <template v-if="children">
+                <div class="wrapper mb_32">
+                    <h2 class="sub-heading mb_8">お子さん</h2>
+                    <div class="content mb_8">
+                        <div class="mb_8"
+                             v-for="(child,index) in children"
+                             :key="child.id"
+                        >
+                            <input type="checkbox" name="children" :value="child.id" :id="'checkout0' + index" v-model="selectedChild">
+                            <label :for="'checkout0' + index" class="checkbox">{{ child.full_kana }}</label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="buttons__container">
-            <div class="button__group">
-                <a @click="backPreview">
-                    <div class="btn light-green">
-                        キャンセル
+            </template>
+            <div class="buttons__container">
+                <template v-if="children">
+                    <div class="button__group">
+                        <a @click="backPreview">
+                            <div class="btn light-green">
+                                キャンセル
+                            </div>
+                        </a>
                     </div>
-                </a>
-            </div>
-            <div class="button__group">
-                <a
-                    @click="postBook(response.parent.id, selectedChild, event.id, event.event_master.price)"
-                >
-                    <div class="btn pink">
-                        保存する
+                    <div class="button__group">
+                        <a
+                            @click="postBook(user.id, selectedChild, event.id, event.event_master.price)"
+                        >
+                            <div class="btn pink">
+                                保存する
+                            </div>
+                        </a>
                     </div>
-                </a>
+                </template>
+                <template v-else>
+                    <nuxt-link to="/user/me/new/parent">
+                        <div class="btn light-green">
+                            予約にはアカウント情報の登録が必要です。
+                        </div>
+                    </nuxt-link>
+                </template>
             </div>
-        </div>
+        </no-ssr>
     </div>
 </template>
 
 <script>
     export default {
         name: "user-events-id-reserve",
+        middleware: "store-user",
         layout: "user",
         data() {
             return {
                 response: [],
-                event: {},
                 selectedChild: []
             }
         },
@@ -134,15 +147,37 @@
             },
             formatAddress: function(response) {
                 return response.state + response.city + response.address1 + response.address2;
+            },
+            async firstFetch() {
+                const id = this.auth_user.id
+                const _user = await this.$axios.$get(`/users/user-parents/${id}/user`)
+                    .then(res => {
+                        this.$store.dispatch('user/GET_USER_CHILDREN', { id: res })
+                    })
+                    .catch(err => err.response)
             }
         },
-        async asyncData({$axios, params}) {
-            const id = "68608530-9813-11e9-8c77-457e6b5eed6d";
-            const [_event, _res] = await Promise.all([
-                $axios.$get(`/users/event-details/${params.id}`),
-                $axios.$get(`users/user-parents/${id}/children`)
-            ]);
-            return { event: _event["data"][0], response: _res };
+        async fetch ({ store, params }) {
+            await store.dispatch('event/GET_EVENT', {id: params.id });
+        },
+        async asyncData() {
+        },
+        computed: {
+            event() {
+                return this.$store.getters['event/event']
+            },
+            user() {
+                return this.$store.getters['user/user']
+            },
+            children() {
+                return this.$store.getters['user/children']
+            },
+            auth_user() {
+                return this.$store.getters['auth/user']
+            }
+        },
+        mounted() {
+            this.firstFetch()
         }
     }
 </script>
@@ -192,21 +227,21 @@
             .button__group {
                 width: 50%;
                 padding: 4px;
-                .btn {
-                    padding: 8px 12px;
-                    border-radius: 4px;
-                    font-size: 16px;
-                    font-weight: 800;
-                    text-align: center;
-                }
                 .pink {
                     color: rgb(226, 121, 133);
                     border: 2px solid rgb(226, 121, 133);
                 }
-                .light-green {
-                    color: rgb(94, 205, 189);
-                    border: 2px solid rgb(94, 205, 189);
-                }
+            }
+            .btn {
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 16px;
+                font-weight: 800;
+                text-align: center;
+            }
+            .light-green {
+                color: rgb(94, 205, 189);
+                border: 2px solid rgb(94, 205, 189);
             }
         }
     }
@@ -272,5 +307,16 @@
     }
     input[type=checkbox]:checked + .checkbox:before {
         opacity: 1;
+    }
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .reserve__container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+    }
+
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
     }
 </style>

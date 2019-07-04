@@ -1,6 +1,6 @@
 <template>
     <div class="create__container">
-        <h1 class="heading mb_24">ユーザーアカウント登録</h1>
+        <h1 class="heading mb_24">ユーザー情報</h1>
         <form class="mb_32">
             <div class="field wrapper mb_16">
                 <label class="label">氏名</label>
@@ -11,7 +11,7 @@
                         name="full_name"
                         type="text"
                         placeholder="田中太郎"
-                        v-model="full_name">
+                        v-model="response.full_name">
                     <div v-if="errors.has('full_name')">
                         {{ errors.first('full_name') }}
                     </div>
@@ -26,7 +26,7 @@
                         name="full_kana"
                         type="text"
                         placeholder="たなかたろう"
-                        v-model="full_kana">
+                        v-model="response.full_kana">
                     <div v-if="errors.has('full_kana')">
                         {{ errors.first('full_kana') }}
                     </div>
@@ -42,7 +42,7 @@
                             name="tel"
                             type="tel"
                             placeholder="090-1234-5678"
-                            v-model="tel">
+                            v-model="response.tel">
                         <div v-if="errors.has('tel:telephone')">
                             {{ errors.first('tel:telephone') }}
                         </div>
@@ -56,7 +56,7 @@
                         <select
                             v-validate="'required'"
                             name="sex"
-                            v-model="sex_id">
+                            v-model="response.sex_id">
                             <option selected value="null">性別</option>
                             <option value="2">男</option>
                             <option value="3">女</option>
@@ -78,7 +78,7 @@
                             name="zip_code1"
                             type="text"
                             placeholder="123"
-                            v-model="zip_code1">
+                            v-model="response.zip_code1">
                         <div v-if="errors.has('zip_code1')">
                             {{ errors.first('zip_code1') }}
                         </div>
@@ -93,7 +93,7 @@
                             name="zip_code2"
                             type="text"
                             placeholder="4567"
-                            v-model="zip_code2">
+                            v-model="response.zip_code2">
                         <div v-if="errors.has('zip_code2')">
                             {{ errors.first('zip_code2') }}
                         </div>
@@ -101,7 +101,7 @@
                 </div>
             </div>
             <div class="field-body mb_16 address_container">
-                <div class="field mb_16">
+                <div class="field">
                     <label class="label">都道府県</label>
                     <div class="control">
                         <input
@@ -110,13 +110,13 @@
                             name="state"
                             type="text"
                             placeholder="例）東京都"
-                            v-model="state">
+                            v-model="response.state">
                         <div v-if="errors.has('state')">
                             {{ errors.first('state') }}
                         </div>
                     </div>
                 </div>
-                <div class="field mb_16">
+                <div class="field">
                     <label class="label">区・市</label>
                     <div class="control">
                         <input
@@ -125,13 +125,13 @@
                             name="city"
                             type="text"
                             placeholder="例）中央区、名古屋市北区"
-                            v-model="city">
+                            v-model="response.city">
                         <div v-if="errors.has('city')">
                             {{ errors.first('city') }}
                         </div>
                     </div>
                 </div>
-                <div class="field mb_16">
+                <div class="field">
                     <label class="label">町村</label>
                     <div class="control">
                         <input
@@ -140,13 +140,13 @@
                             name="address1"
                             type="text"
                             placeholder="例）月島"
-                            v-model="address1">
+                            v-model="response.address1">
                         <div v-if="errors.has('address1')">
                             {{ errors.first('address1') }}
                         </div>
                     </div>
                 </div>
-                <div class="field mb_16">
+                <div class="field">
                     <label class="label">番地・マンション名</label>
                     <div class="control">
                         <input
@@ -155,7 +155,7 @@
                             name="address2"
                             type="text"
                             placeholder="例）1-1-1-201"
-                            v-model="address2">
+                            v-model="response.address2">
                         <div v-if="errors.has('address2')">
                             {{ errors.first('address2') }}
                         </div>
@@ -164,9 +164,11 @@
             </div>
         </form>
         <div class="create__button">
-            <button class="button btn" @click="storeParentAndMoving" :disabled="errors.any() || !isComplete()">
-                続けてお子さん情報を登録する
-            </button>
+            <a @click="putUserParent">
+                <div class="btn">
+                    更新する
+                </div>
+            </a>
         </div>
     </div>
 </template>
@@ -205,66 +207,47 @@
     Validator.extend('telephone', telephone);
 
     export default {
-        name: "user-me-new-parent",
-        layout: "user",
+        name: "index",
+        layout: 'user',
         data() {
             return {
-                full_name: '',
-                full_kana: '',
-                tel: '',
-                sex_id: '',
-                zip_code1: '',
-                zip_code2: '',
-                state: '',
-                city: '',
-                address1: '',
-                address2: ''
+                response: [],
             }
+        },
+        async asyncData({ $axios, params }) {
+            const create_url = `users/user-parents/${params.id}`
+
+            return $axios.$get(create_url)
+                .then(res => {
+                    return { response: res }
+                }).catch(e => {
+                    console.log(e)
+                })
         },
         methods: {
-            saveLocalStorage: function() {
-                const userParentData = {
-                    full_name : this.full_name,
-                    full_kana : this.full_kana,
-                    tel       : this.tel,
-                    sex_id    : this.sex_id,
-                    zip_code1 : this.zip_code1,
-                    zip_code2 : this.zip_code2,
-                    state     : this.state,
-                    city      : this.city,
-                    address1  : this.address1,
-                    address2  : this.address2
-                };
-                window.localStorage.setItem("parent", JSON.stringify(userParentData));
-            },
-            getLocalStorage: function(){
-                const ls_data = JSON.parse(window.localStorage.getItem("parent"));
-                if (!ls_data) {
-                    return false;
+            putUserParent: async function() {
+                const user_master_id = this.user.id
+                const payload = {
+                    user_master_id: user_master_id,
+                    full_name: this.response.full_name,
+                    full_kana: this.response.full_kana,
+                    tel: this.response.tel,
+                    sex_id: this.response.sex_id,
+                    zip_code1: this.response.zip_code1,
+                    zip_code2: this.response.zip_code2,
+                    state: this.response.state,
+                    city: this.response.city,
+                    address1: this.response.address1,
+                    address2: this.response.address2
                 }
-                else {
-                    this.full_name = ls_data.full_name;
-                    this.full_kana = ls_data.full_kana;
-                    this.tel = ls_data.tel;
-                    this.sex_id = ls_data.sex_id;
-                    this.zip_code1 = ls_data.zip_code1;
-                    this.zip_code2 = ls_data.zip_code2;
-                    this.state = ls_data.state;
-                    this.city = ls_data.city;
-                    this.address1 = ls_data.address1;
-                    this.address2 = ls_data.address2;
-                }
+                await this.$axios.put(`users/user-parents/${this.$route.params.id}`, payload)
+                this.$router.push(`/user/me/${this.$route.params.id}`);
             },
-            storeParentAndMoving: async function() {
-                await this.saveLocalStorage();
-                this.$router.push("/user/me/new/child");
-            },
-            isComplete: function() {
-                return this.full_name && this.full_kana && this.tel && this.sex_id && this.zip_code1 && this.zip_code2 && this.state && this.city && this.address1 && this.address2
-            }
         },
-        mounted() {
-            this.getLocalStorage()
+        computed: {
+            user() {
+                return this.$store.getters['auth/user']
+            },
         }
     }
 </script>
@@ -316,14 +299,10 @@
         padding: 16px;
         .create__button {
             width: 100%;
-            height: 50px;
             text-align: center;
-            .button {
-                margin: 0 auto;
-            }
+
             .btn {
-                width: 100%;
-                height: 100%;
+                padding: 8px 12px;
                 border: 2px solid rgb(226, 121, 133);
                 border-radius: 4px;
                 color: rgb(226, 121, 133);
@@ -331,6 +310,11 @@
                 font-weight: 800;
             }
         }
+    }
+    .child-box {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     // SP横、タブレット縦

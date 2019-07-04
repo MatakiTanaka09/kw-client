@@ -1,16 +1,12 @@
 <template>
     <div class="create__container">
-        <h1 class="heading mb_24">ユーザーアカウント登録</h1>
-        <!--<div class="progress-value mb_24">-->
-            <!--<h2 class="sub-heading mb_8">②お子さん基本情報登録</h2>-->
-            <!--<progress class="progress is-link" value="66" max="100">66%</progress>-->
-        <!--</div>-->
+        <h1 class="heading mb_24">お子さん追加</h1>
         <form class="mb_32"
               v-for="(child,index) in children"
               :key="index"
         >
             <div class="form__title">
-                <h3 class="mb_16">{{ childCounter(index) }}人目のお子さん</h3>
+                <div></div>
                 <template v-if="checkChildNumForRemoveButton(index)">
                     <div class="remove__button">
                         <a @click="removeUserChild">
@@ -131,14 +127,12 @@
         </div>
         <div class="buttons__container">
             <div class="button__group">
-                <nuxt-link to="/user/me/new/parent">
-                    <button class="button btn light-green">
-                        前に戻る
-                    </button>
-                </nuxt-link>
+                <button class="button btn light-green" @click="removeChildrenAndMoving">
+                    戻る
+                </button>
             </div>
             <div class="button__group">
-                <button class="button btn pink" @click="storeParentAndMoving" :disabled="errors.any() || !isComplete(children)">
+                <button class="button btn pink" @click="storeChildrenAndMoving" :disabled="errors.any() || !isComplete(children)">
                     確認画面へ
                 </button>
             </div>
@@ -178,7 +172,9 @@
                             day: ''
                         }
                     }
-                ]
+                ],
+                back_url: `/user/me/${this.$route.params.id}/children/edit`,
+                confirm_url: `/user/me/${this.$route.params.id}/children/confirm`
             }
         },
         methods: {
@@ -239,10 +235,10 @@
                         sex_id    : children[i].sex_id
                     };
                 }
-                window.localStorage.setItem("children", JSON.stringify(array));
+                window.localStorage.setItem("children_new", JSON.stringify(array));
             },
             getLocalStorage: function(){
-                const ls_data = JSON.parse(window.localStorage.getItem("children"));
+                const ls_data = JSON.parse(window.localStorage.getItem("children_new"));
                 if (!ls_data) {
                     return false;
                 }
@@ -265,9 +261,16 @@
                     }
                 }
             },
-            storeParentAndMoving: async function() {
+            removeChildrenLocalStorage: async function() {
+                window.localStorage.removeItem("children_new");
+            },
+            removeChildrenAndMoving: async function() {
+                await this.removeChildrenLocalStorage();
+                this.$router.push(this.back_url);
+            },
+            storeChildrenAndMoving: async function() {
                 await this.saveLocalStorage();
-                this.$router.push("/user/me/new/confirm");
+                this.$router.push(this.confirm_url);
             },
             isComplete: function(children) {
                 let result = 0;
@@ -347,7 +350,7 @@
             width: 100%;
             text-align: center;
             .btn {
-                padding: 4px;
+                padding: 8px 12px;
                 border: 2px solid gray;
                 border-radius: 4px;
                 color: gray;
@@ -363,7 +366,7 @@
                 padding: 4px;
                 .btn {
                     width: 100%;
-                    height: 120%;
+                    height: 100%;
                     border-radius: 4px;
                     font-size: 16px;
                     font-weight: 800;
@@ -405,7 +408,6 @@
             margin: 0 auto;
         }
     }
-
     // デスクトップ、タブレット横
     @media screen and (min-width: 769px) {
 

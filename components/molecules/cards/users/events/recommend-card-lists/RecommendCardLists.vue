@@ -8,7 +8,7 @@
 <script>
     import BaseCardLists from "../base-card-lists/BaseCardLists"
     export default {
-        name: "RecommendCardLists",
+        name: "RecentlyCardLists",
         components: {
             BaseCardLists
         },

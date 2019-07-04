@@ -1,5 +1,5 @@
 <template>
-    <div class="category-card">
+    <div class="category-card" id="category">
         <nuxt-link :to="path">
             <figure class="image image-expand">
                 <img :src="image_path" :alt="name">
@@ -89,5 +89,16 @@
         width: 50%;
         height: auto;
         padding: 4px;
+    }
+
+    // SP横、タブレット縦
+    @media screen and (min-width: 481px) {
+        .category-card {
+            width: 33%;
+        }
+    }
+
+    // デスクトップ、タブレット横
+    @media screen and (min-width: 769px) {
     }
 </style>
