@@ -27,7 +27,7 @@
             <div class="links mb_24 mt_8">
                 <div class="link-group">
                     <div class="link">
-                        <nuxt-link to="/">Kidsweekendとは</nuxt-link>
+                        <nuxt-link to="/">kidsweekendとは</nuxt-link>
                     </div>
                     <div class="link">
                         <nuxt-link to="/">会社概要</nuxt-link>
