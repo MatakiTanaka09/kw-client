@@ -23,7 +23,7 @@
     "cross-env": "^5.2.0",
     "form-data": "^2.3.3",
     "js-cookie": "^2.2.0",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.15.8",
     "style-loader": "^0.23.1",
     "universal-cookie": "^4.0.0",
     "vee-validate": "^2.2.11",
